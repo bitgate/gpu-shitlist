@@ -185,7 +185,7 @@ Every non-community entry is traceable to engine source or official docs — see
 
 ## Contribute
 
-Edit `sources/entries.yaml`, run the generator, commit the output:
+Edit a file under `sources/`, run the generator, commit the output:
 
 ```bash
 pip install pyyaml
