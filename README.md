@@ -184,6 +184,7 @@ python generate.py -v        # verbose summary
   conditions:             # optional — omit for unconditional deny
     min_vulkan_api: "1.1.170"
     min_driver_version: "1.473.1397"
+    unless_driver_msb_set: true   # optional — skip entry when raw driver version MSB is set
   reason: "SIGSEGV on non-trivial Vulkan workloads"
   source: community
 ```
