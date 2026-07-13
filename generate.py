@@ -88,6 +88,8 @@ def validate_entry(entry: dict, idx: int) -> list[str]:
                     parse_version(conditions[key])
                 except (ValueError, TypeError):
                     errors.append(f"[{eid}] invalid {key}: {conditions[key]}")
+        if "unless_driver_msb_set" in conditions and not isinstance(conditions["unless_driver_msb_set"], bool):
+            errors.append(f"[{eid}] unless_driver_msb_set must be a boolean")
 
     return errors
 
