@@ -16,7 +16,28 @@ Or grab a pinned version from the [releases page](https://github.com/bitgate/gpu
 
 ## Use it
 
-The JSON is a flat array of entries. Each entry has a `pattern` (regex or literal), the `fields` to match against, optional `conditions` (version gates), and an `action`. Load it at startup, check your GPU string — C++ with [nlohmann/json](https://github.com/nlohmann/json) (ports 1:1 to C#, Kotlin, Java):
+The JSON is a flat array of entries. Each entry has a `pattern` (regex or literal), the `fields` to match against, optional `conditions` (version gates), and an `action`:
+
+```json
+{
+  "id": "powervr-vulkan-min-spec",
+  "vendor": "Imagination Technologies",
+  "match_type": "regex",
+  "pattern": "PowerVR",
+  "fields": ["gpu_name"],
+  "action": "deny_vulkan",
+  "conditions": {
+    "min_vulkan_api": "1.1.170",
+    "min_driver_version": "1.473.1397"
+  },
+  "reason": "Unity default blocklist: PowerVR Vulkan drivers below this threshold crash",
+  "source": "unity"
+}
+```
+
+Hard denies (e.g. `PowerVR.*GE8320`) simply omit `conditions` — match means deny, no version check.
+
+Load it at startup, check your GPU string — C++ with [nlohmann/json](https://github.com/nlohmann/json) (ports 1:1 to C#, Kotlin, Java):
 
 ```cpp
 #include <fstream>
