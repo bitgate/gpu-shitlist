@@ -64,6 +64,55 @@ if (shouldDenyVulkan(blocklist, gpuName, vulkanApiVersion, driverVersion))
     fallBackToGLES();
 ```
 
+Same thing in Rust ([serde_json](https://crates.io/crates/serde_json) + [regex](https://crates.io/crates/regex)):
+
+```rust
+use regex::Regex;
+use serde_json::Value;
+
+fn parse_version(v: &str) -> Vec<u32> {
+    v.split('.').filter_map(|p| p.parse().ok()).collect()
+}
+
+fn version_below(actual: &str, minimum: &str) -> bool {
+    parse_version(actual) < parse_version(minimum)
+}
+
+fn should_deny_vulkan(blocklist: &Value, gpu_name: &str, vulkan_api: &str, driver_version: &str) -> bool {
+    for e in blocklist["entries"].as_array().into_iter().flatten() {
+        let pattern = e["pattern"].as_str().unwrap_or_default();
+        let matched = if e["match_type"] == "regex" {
+            Regex::new(pattern).map(|re| re.is_match(gpu_name)).unwrap_or(false)
+        } else {
+            gpu_name == pattern
+        };
+        if !matched {
+            continue;
+        }
+
+        let Some(c) = e.get("conditions") else { return true };
+        if let Some(min) = c["min_vulkan_api"].as_str() {
+            if !vulkan_api.is_empty() && version_below(vulkan_api, min) {
+                return true;
+            }
+        }
+        if let Some(min) = c["min_driver_version"].as_str() {
+            if !driver_version.is_empty() && version_below(driver_version, min) {
+                return true;
+            }
+        }
+    }
+    false
+}
+```
+
+```rust
+let blocklist: Value = serde_json::from_str(&std::fs::read_to_string("blocklist.json")?)?;
+if should_deny_vulkan(&blocklist, &gpu_name, &vulkan_api, &driver_version) {
+    fall_back_to_gles();
+}
+```
+
 No conditions = unconditional hard deny. Conditions present = deny only when the device's reported version is **below** the minimum.
 
 ### Match fields
