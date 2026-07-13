@@ -136,6 +136,8 @@ if should_deny_vulkan(&blocklist, &gpu_name, &vulkan_api, &driver_version) {
 
 No conditions = unconditional hard deny. Conditions present = deny only when the device's reported version is **below** the minimum.
 
+One extra condition exists: `unless_driver_msb_set` (currently only on the Adreno entry). Qualcomm's newer drivers set the most significant bit of the raw `VkPhysicalDeviceProperties::driverVersion` — if you have that raw `uint32`, skip the entry when `driverVersion & 0x80000000` is set. If you only have version strings, ignoring it just makes the check slightly more conservative.
+
 ### Match fields
 
 | Field | Source |
