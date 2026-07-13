@@ -46,6 +46,7 @@ Load it at startup, check your GPU string — C++ with [nlohmann/json](https://g
 #include <vector>
 #include <nlohmann/json.hpp>
 
+// "1.473.1397" -> {1, 473, 1397}, so versions compare like numbers, not strings
 static std::vector<int> parseVersion(const std::string& v) {
     std::vector<int> parts;
     std::stringstream ss(v);
@@ -62,27 +63,32 @@ bool shouldDenyVulkan(const nlohmann::json& blocklist,
                       const std::string& vulkanApi = "",
                       const std::string& driverVersion = "") {
     for (const auto& e : blocklist["entries"]) {
+        // is this entry even talking about our GPU?
         bool matched = e["match_type"] == "regex"
             ? std::regex_search(gpuName, std::regex(e["pattern"].get<std::string>()))
             : gpuName == e["pattern"].get<std::string>();
         if (!matched) continue;
 
+        // no conditions = the hardware itself is the problem — hard deny
         if (!e.contains("conditions")) return true;
+
+        // otherwise deny only if the device sits below the known-good minimum
         const auto& c = e["conditions"];
         if (c.contains("min_vulkan_api") && !vulkanApi.empty() &&
             versionBelow(vulkanApi, c["min_vulkan_api"].get<std::string>())) return true;
         if (c.contains("min_driver_version") && !driverVersion.empty() &&
             versionBelow(driverVersion, c["min_driver_version"].get<std::string>())) return true;
     }
-    return false;
+    return false; // clean record — let it have Vulkan
 }
 ```
 
 ```cpp
+// once at startup, before you so much as look at vkCreateInstance
 std::ifstream f("blocklist.json");
 auto blocklist = nlohmann::json::parse(f);
 if (shouldDenyVulkan(blocklist, gpuName, vulkanApiVersion, driverVersion))
-    fallBackToGLES();
+    fallBackToGLES(); // deny means deny
 ```
 
 Same thing in Rust ([serde_json](https://crates.io/crates/serde_json) + [regex](https://crates.io/crates/regex)):
@@ -91,6 +97,7 @@ Same thing in Rust ([serde_json](https://crates.io/crates/serde_json) + [regex](
 use regex::Regex;
 use serde_json::Value;
 
+// "1.473.1397" -> [1, 473, 1397], so versions compare like numbers, not strings
 fn parse_version(v: &str) -> Vec<u32> {
     v.split('.').filter_map(|p| p.parse().ok()).collect()
 }
@@ -102,6 +109,7 @@ fn version_below(actual: &str, minimum: &str) -> bool {
 fn should_deny_vulkan(blocklist: &Value, gpu_name: &str, vulkan_api: &str, driver_version: &str) -> bool {
     for e in blocklist["entries"].as_array().into_iter().flatten() {
         let pattern = e["pattern"].as_str().unwrap_or_default();
+        // is this entry even talking about our GPU?
         let matched = if e["match_type"] == "regex" {
             Regex::new(pattern).map(|re| re.is_match(gpu_name)).unwrap_or(false)
         } else {
@@ -111,7 +119,9 @@ fn should_deny_vulkan(blocklist: &Value, gpu_name: &str, vulkan_api: &str, drive
             continue;
         }
 
+        // no conditions = the hardware itself is the problem — hard deny
         let Some(c) = e.get("conditions") else { return true };
+        // otherwise deny only if the device sits below the known-good minimum
         if let Some(min) = c["min_vulkan_api"].as_str() {
             if !vulkan_api.is_empty() && version_below(vulkan_api, min) {
                 return true;
@@ -123,14 +133,15 @@ fn should_deny_vulkan(blocklist: &Value, gpu_name: &str, vulkan_api: &str, drive
             }
         }
     }
-    false
+    false // clean record — let it have Vulkan
 }
 ```
 
 ```rust
+// once at startup, before you so much as look at vkCreateInstance
 let blocklist: Value = serde_json::from_str(&std::fs::read_to_string("blocklist.json")?)?;
 if should_deny_vulkan(&blocklist, &gpu_name, &vulkan_api, &driver_version) {
-    fall_back_to_gles();
+    fall_back_to_gles(); // deny means deny
 }
 ```
 
