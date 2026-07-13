@@ -1,0 +1,109 @@
+# GPU Vulkan Blocklist Source Entries
+# Add entries here, then run: python generate.py
+#
+# Entry fields:
+#   id: unique identifier (kebab-case)
+#   vendor: GPU vendor name (for grouping/display)
+#   match:
+#     type: "regex" or "literal"
+#     pattern: string or regex to match against the field(s)
+#     fields: list of device fields to match (optional, defaults to [gpu_name])
+#   action: "deny_vulkan" (force GLES fallback)
+#   conditions: (optional — omit for unconditional hard deny)
+#     min_vulkan_api: deny if device Vulkan API version is below this
+#     min_driver_version: deny if device Vulkan driver version is below this
+#   reason: human-readable explanation
+#   source: where this entry came from (unity, unreal, community, etc.)
+
+entries:
+  # === Imagination Technologies / PowerVR ===
+
+  - id: powervr-rogue-ge8320
+    vendor: Imagination Technologies
+    match:
+      type: regex
+      pattern: "PowerVR.*GE8320"
+    action: deny_vulkan
+    reason: "SIGSEGV on non-trivial Vulkan workloads; driver leaks memory on optimized-out draw calls"
+    source: community
+
+  - id: powervr-rogue-ge8300
+    vendor: Imagination Technologies
+    match:
+      type: regex
+      pattern: "PowerVR.*GE8300"
+    action: deny_vulkan
+    reason: "Same Rogue driver family as GE8320; known Vulkan instability"
+    source: community
+
+  - id: powervr-rogue-ge8100
+    vendor: Imagination Technologies
+    match:
+      type: regex
+      pattern: "PowerVR.*GE8100"
+    action: deny_vulkan
+    reason: "Lowest-end Rogue core; Vulkan driver severely unstable"
+    source: community
+
+  - id: powervr-vulkan-min-spec
+    vendor: Imagination Technologies
+    match:
+      type: regex
+      pattern: "PowerVR"
+    action: deny_vulkan
+    conditions:
+      min_vulkan_api: "1.1.170"
+      min_driver_version: "1.473.1397"
+    reason: "Unity default blocklist: PowerVR Vulkan drivers below this threshold crash"
+    source: unity
+
+  # === ARM Mali ===
+
+  - id: mali-vulkan-min-spec
+    vendor: ARM
+    match:
+      type: regex
+      pattern: "Mali"
+    action: deny_vulkan
+    conditions:
+      min_vulkan_api: "1.0.61"
+    reason: "Unity default blocklist: Mali Vulkan drivers below this API version are unstable"
+    source: unity
+
+  # === Qualcomm Adreno ===
+
+  - id: adreno-vulkan-min-spec
+    vendor: Qualcomm
+    match:
+      type: regex
+      pattern: "Adreno"
+    action: deny_vulkan
+    conditions:
+      min_vulkan_api: "1.0.49"
+    reason: "Unity default blocklist: Adreno Vulkan drivers below this API version are unstable"
+    source: unity
+
+  # === NVidia ===
+
+  - id: nvidia-vulkan-min-spec
+    vendor: NVidia
+    match:
+      type: regex
+      pattern: "NVIDIA"
+    action: deny_vulkan
+    conditions:
+      min_vulkan_api: "1.0.13"
+    reason: "Unity default blocklist: NVidia Vulkan drivers below this API version are unstable"
+    source: unity
+
+  # === Google Pixel 6 ===
+
+  - id: pixel6-hard-deny
+    vendor: Google
+    match:
+      type: literal
+      pattern: "Pixel 6"
+      fields: [device_model]
+    action: deny_vulkan
+    reason: "Unity default blocklist: Pixel 6 hard-denied for Vulkan (Mali-G78 driver issues)"
+    source: unity
