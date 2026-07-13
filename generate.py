@@ -114,6 +114,8 @@ def compile_entry(entry: dict) -> dict:
         "fields": m.get("fields", DEFAULT_FIELDS),
         "action": entry["action"],
     }
+    if "platform" in entry:
+        out["platform"] = entry["platform"]
     if "conditions" in entry:
         out["conditions"] = entry["conditions"]
     out["reason"] = entry["reason"]
