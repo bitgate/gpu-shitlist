@@ -100,12 +100,12 @@ entries:
 
   # === Google Pixel 6 ===
 
-  - id: pixel6-hard-deny
+  - id: pixel6-family-hard-deny
     vendor: Google
     match:
-      type: literal
-      pattern: "Pixel 6"
-      fields: [device_model]
+      type: regex
+      pattern: "^(Pixel 6( Pro)?|Pixel 6a|oriole|raven|bluejay)$"
+      fields: [device_model, device_product]
     action: deny_vulkan
-    reason: "Unity default blocklist: Pixel 6 hard-denied for Vulkan (Mali-G78 driver issues)"
+    reason: "Unity default blocklist: entire Pixel 6 family (6/6 Pro/6a, products oriole/raven/bluejay) denied Vulkan due to Mali-G78 driver issues"
     source: unity
