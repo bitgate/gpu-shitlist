@@ -1,6 +1,6 @@
 {
   "version": "2026-07-13",
-  "generated_at": "2026-07-13T09:30:05.771194+00:00",
+  "generated_at": "2026-07-13T09:53:45.355808+00:00",
   "entry_count": 8,
   "entries": [
     {
@@ -19,15 +19,16 @@
       "source": "unity"
     },
     {
-      "id": "pixel6-hard-deny",
+      "id": "pixel6-family-hard-deny",
       "vendor": "Google",
-      "match_type": "literal",
-      "pattern": "Pixel 6",
+      "match_type": "regex",
+      "pattern": "^(Pixel 6( Pro)?|Pixel 6a|oriole|raven|bluejay)$",
       "fields": [
-        "device_model"
+        "device_model",
+        "device_product"
       ],
       "action": "deny_vulkan",
-      "reason": "Unity default blocklist: Pixel 6 hard-denied for Vulkan (Mali-G78 driver issues)",
+      "reason": "Unity default blocklist: entire Pixel 6 family (6/6 Pro/6a, products oriole/raven/bluejay) denied Vulkan due to Mali-G78 driver issues",
       "source": "unity"
     },
     {
@@ -107,9 +108,10 @@
       ],
       "action": "deny_vulkan",
       "conditions": {
-        "min_vulkan_api": "1.0.49"
+        "min_vulkan_api": "1.0.49",
+        "unless_driver_msb_set": true
       },
-      "reason": "Unity default blocklist: Adreno Vulkan drivers below this API version are unstable",
+      "reason": "Unity default blocklist: Adreno needs Vulkan API >= 1.0.49 unless the raw driver version has its MSB set (new-style Qualcomm driver versioning)",
       "source": "unity"
     }
   ]
