@@ -1,7 +1,7 @@
 {
   "version": "2026-07-13",
-  "generated_at": "2026-07-13T09:53:45.355808+00:00",
-  "entry_count": 8,
+  "generated_at": "2026-07-13T10:13:01.870445+00:00",
+  "entry_count": 13,
   "entries": [
     {
       "id": "mali-vulkan-min-spec",
@@ -30,6 +30,45 @@
       "action": "deny_vulkan",
       "reason": "Unity default blocklist: entire Pixel 6 family (6/6 Pro/6a, products oriole/raven/bluejay) denied Vulkan due to Mali-G78 driver issues",
       "source": "unity"
+    },
+    {
+      "id": "impeller-huawei-maleoon",
+      "vendor": "Huawei",
+      "match_type": "regex",
+      "pattern": "Maleoon",
+      "fields": [
+        "gpu_name"
+      ],
+      "action": "deny_vulkan",
+      "reason": "Flutter Impeller denies Vulkan on all Huawei Maleoon GPUs (flutter/flutter#156623)",
+      "source": "flutter-impeller"
+    },
+    {
+      "id": "impeller-pixel10-powervr-ddk-min",
+      "vendor": "Imagination Technologies",
+      "match_type": "regex",
+      "pattern": "^Pixel 10\\b",
+      "fields": [
+        "device_model"
+      ],
+      "action": "deny_vulkan",
+      "conditions": {
+        "min_driver_version": "6794074"
+      },
+      "reason": "Flutter Impeller blocks Vulkan on Pixel 10 (PowerVR DXT, device id 0x71061212) below PowerVR DDK build 6794074 (= driver 25.1)",
+      "source": "flutter-impeller"
+    },
+    {
+      "id": "impeller-powervr-pre-b-series",
+      "vendor": "Imagination Technologies",
+      "match_type": "regex",
+      "pattern": "PowerVR.*(Rogue|AXE|AXM|AXT)",
+      "fields": [
+        "gpu_name"
+      ],
+      "action": "deny_vulkan",
+      "reason": "Flutter Impeller denies Vulkan on all PowerVR GPUs older than B-series (flutter/flutter#161122, #160960, #160866, #160804, #160406)",
+      "source": "flutter-impeller"
     },
     {
       "id": "powervr-rogue-ge8100",
@@ -113,6 +152,33 @@
       },
       "reason": "Unity default blocklist: Adreno needs Vulkan API >= 1.0.49 unless the raw driver version has its MSB set (new-style Qualcomm driver versioning)",
       "source": "unity"
+    },
+    {
+      "id": "impeller-adreno-650-and-older",
+      "vendor": "Qualcomm",
+      "match_type": "regex",
+      "pattern": "Adreno \\(TM\\) (504|505|506|508|509|510|512|530|540|605|608|610|612|613|615|616|618|619L?|620|630|640|642L?|643L|644|650)\\b",
+      "fields": [
+        "gpu_name"
+      ],
+      "action": "deny_vulkan",
+      "reason": "Flutter Impeller falls back to GLES on Adreno 650 and older: requires workarounds like disabling framebuffer fetch (flutter/flutter#178285, #178498)",
+      "source": "flutter-impeller"
+    },
+    {
+      "id": "impeller-samsung-xclipse-vulkan13",
+      "vendor": "Samsung",
+      "match_type": "regex",
+      "pattern": "Xclipse",
+      "fields": [
+        "gpu_name"
+      ],
+      "action": "deny_vulkan",
+      "conditions": {
+        "min_vulkan_api": "1.3.0"
+      },
+      "reason": "First-gen Samsung Xclipse has driver bugs but reports the same driver version as fixed units; Flutter Impeller uses Vulkan API >= 1.3 as the good-driver proxy (flutter/flutter#161334)",
+      "source": "flutter-impeller"
     }
   ]
 }
