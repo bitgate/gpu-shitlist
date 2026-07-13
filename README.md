@@ -138,6 +138,8 @@ No conditions = unconditional hard deny. Conditions present = deny only when the
 
 One extra condition exists: `unless_driver_msb_set` (currently only on the Adreno entry). Qualcomm's newer drivers set the most significant bit of the raw `VkPhysicalDeviceProperties::driverVersion` — if you have that raw `uint32`, skip the entry when `driverVersion & 0x80000000` is set. If you only have version strings, ignoring it just makes the check slightly more conservative.
 
+Desktop entries carry a `platform` field (`windows` / `linux`) — skip entries whose platform isn't yours. Entries without `platform` apply everywhere.
+
 ### Match fields
 
 | Field | Source |
