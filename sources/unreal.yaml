@@ -1,0 +1,69 @@
+# Entries verified against Unreal Engine's driver deny list:
+# Engine/Config/BaseHardware.ini (UE5 `release` branch, July 2026 snapshot,
+# provided verbatim from an Epic-licensed checkout).
+#
+# Only Vulkan-relevant rules are ingested: RHI="Vulkan" entries plus Linux
+# entries (UE on Linux is Vulkan-only). Skipped: D3D11/D3D12-only rules and
+# rules gated on Unreal's vendor-internal AdapterGeneration or driver *date*,
+# neither of which is observable from a runtime GPU string.
+
+entries:
+  - id: unreal-nvidia-windows-vulkan-min
+    vendor: NVidia
+    platform: windows
+    match:
+      type: regex
+      pattern: "NVIDIA"
+    action: deny_vulkan
+    conditions:
+      min_driver_version: "570.00"
+    reason: "Unreal BaseHardware.ini: NVIDIA Windows drivers below the 570 series have known stability issues and missing features on Vulkan"
+    source: unreal
+
+  - id: unreal-nvidia-linux-min
+    vendor: NVidia
+    platform: linux
+    match:
+      type: regex
+      pattern: "NVIDIA"
+    action: deny_vulkan
+    conditions:
+      min_driver_version: "580.00"
+    reason: "Unreal BaseHardware.ini: NVIDIA Linux drivers below 580.00 have known stability issues and missing features"
+    source: unreal
+
+  - id: unreal-amd-linux-radv-min
+    vendor: AMD
+    platform: linux
+    match:
+      type: regex
+      pattern: "AMD|Radeon"
+    action: deny_vulkan
+    conditions:
+      min_driver_version: "25.0.0"
+    reason: "Unreal BaseHardware.ini: Mesa/RADV below 25.0.0 has known stability issues and missing features (SM6 + ray tracing require 25.0.0+)"
+    source: unreal
+
+  - id: unreal-intel-windows-vulkan-min
+    vendor: Intel
+    platform: windows
+    match:
+      type: regex
+      pattern: "Intel"
+    action: deny_vulkan
+    conditions:
+      min_driver_version: "101.5989"
+    reason: "Unreal BaseHardware.ini: Intel Windows drivers below unified version 101.5989 (Sept 2024) have known stability and performance issues on Vulkan; compare the last two fields of the full 32.0.101.xxxx version"
+    source: unreal
+
+  - id: unreal-intel-linux-mesa-min
+    vendor: Intel
+    platform: linux
+    match:
+      type: regex
+      pattern: "Intel"
+    action: deny_vulkan
+    conditions:
+      min_driver_version: "25.0.0"
+    reason: "Unreal BaseHardware.ini: Mesa builds older than 25.0.0 have issues running UE5"
+    source: unreal
