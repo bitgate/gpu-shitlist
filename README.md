@@ -199,6 +199,7 @@ python generate.py -v        # verbose summary
 ```yaml
 - id: my-gpu-block
   vendor: Imagination Technologies
+  platform: windows        # optional — windows/linux/android; omit = all platforms
   match:
     type: regex          # or "literal"
     pattern: "PowerVR.*GE8320"
