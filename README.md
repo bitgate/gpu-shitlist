@@ -149,16 +149,29 @@ One extra condition exists: `unless_driver_msb_set` (currently only on the Adren
 
 ## What's in the list
 
-8 entries covering:
+13 entries covering:
 
-- **PowerVR Rogue GE8100/8300/8320** — unconditional hard denies (community-sourced crash reports)
-- **PowerVR** — Vulkan API < 1.1.170 or driver < 1.473.1397 (Unity default)
-- **Mali** — Vulkan API < 1.0.61 (Unity default)
-- **Adreno** — Vulkan API < 1.0.49, skipped when the raw driver version has its MSB set (Unity default)
-- **NVidia** — Vulkan API < 1.0.13 (Unity default)
+**From Unity's default Vulkan blocklist** ([official min-spec table](https://docs.unity3d.com/6000.0/Documentation/Manual/allow-deny-vulkan-usage.html)):
+
+- **PowerVR** — Vulkan API < 1.1.170 or driver < 1.473.1397
+- **Mali** — Vulkan API < 1.0.61
+- **Adreno** — Vulkan API < 1.0.49, skipped when the raw driver version has its MSB set
+- **NVidia** — Vulkan API < 1.0.13
 - **Pixel 6 / 6 Pro / 6a** — regex hard deny on `device_model`/`device_product` (`oriole`/`raven`/`bluejay`), Unity denies the whole family by default
 
-All Unity-sourced values verified against the [official minimum-specification table](https://docs.unity3d.com/6000.0/Documentation/Manual/allow-deny-vulkan-usage.html).
+**From Flutter Impeller's Vulkan fallback** ([`DriverInfoVK::IsKnownBadDriver()`](https://github.com/flutter/flutter/blob/master/engine/src/flutter/impeller/renderer/backend/vulkan/driver_info_vk.cc)):
+
+- **Adreno 650 and older** — hard deny; needs workarounds Impeller refuses to carry (660+ stays allowed)
+- **Huawei Maleoon** — hard deny, all models
+- **Samsung Xclipse** — deny when Vulkan API < 1.3 (first-gen Xclipse bug proxy; broken and fixed units report identical driver versions)
+- **PowerVR pre-B-series (Rogue / A-series)** — hard deny; Impeller only trusts B-series and newer
+- **Pixel 10** — deny below PowerVR DDK build 6794074 (driver 25.1) on `device_model`
+
+**Community-sourced** (crash reports):
+
+- **PowerVR Rogue GE8100/8300/8320** — unconditional hard denies
+
+Every non-community entry is traceable to engine source or official docs — see the `source` field per entry.
 
 ## Contribute
 
