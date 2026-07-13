@@ -92,6 +92,10 @@ def validate_entry(entry: dict, idx: int) -> list[str]:
         if "unless_driver_msb_set" in conditions and not isinstance(conditions["unless_driver_msb_set"], bool):
             errors.append(f"[{eid}] unless_driver_msb_set must be a boolean")
 
+    platform = entry.get("platform")
+    if platform is not None and platform not in VALID_PLATFORMS:
+        errors.append(f"[{eid}] invalid platform: {platform} (must be {VALID_PLATFORMS})")
+
     return errors
 
 
