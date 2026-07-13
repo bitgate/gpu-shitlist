@@ -169,6 +169,14 @@ Desktop entries carry a `platform` field (`windows` / `linux`) — skip entries 
 - **PowerVR pre-B-series (Rogue / A-series)** — hard deny; Impeller only trusts B-series and newer
 - **Pixel 10** — deny below PowerVR DDK build 6794074 (driver 25.1) on `device_model`
 
+**From Unreal Engine's driver deny list** (`Engine/Config/BaseHardware.ini`, UE5 `release`; desktop entries, tagged with `platform`):
+
+- **NVIDIA** — Windows: Vulkan denied below driver 570.00 · Linux: denied below 580.00
+- **AMD (Linux)** — Mesa/RADV below 25.0.0 denied
+- **Intel** — Windows: Vulkan denied below unified driver 101.5989 · Linux: Mesa below 25.0.0 denied
+
+Only Vulkan-relevant rules were ingested — D3D11/D3D12-only entries and rules gated on Unreal's internal `AdapterGeneration` / driver dates (not observable from a GPU string) were skipped.
+
 **Community-sourced** (crash reports):
 
 - **PowerVR Rogue GE8100/8300/8320** — unconditional hard denies
