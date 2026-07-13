@@ -101,7 +101,7 @@ def validate_entry(entry: dict, idx: int) -> list[str]:
 
 def dedup_key(entry: dict) -> tuple:
     m = entry["match"]
-    return (m["type"], m["pattern"], tuple(sorted(m.get("fields", DEFAULT_FIELDS))))
+    return (m["type"], m["pattern"], tuple(sorted(m.get("fields", DEFAULT_FIELDS))), entry.get("platform", ""))
 
 
 def compile_entry(entry: dict) -> dict:
