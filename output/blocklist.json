@@ -1,0 +1,116 @@
+{
+  "version": "2026-07-13",
+  "generated_at": "2026-07-13T09:30:05.771194+00:00",
+  "entry_count": 8,
+  "entries": [
+    {
+      "id": "mali-vulkan-min-spec",
+      "vendor": "ARM",
+      "match_type": "regex",
+      "pattern": "Mali",
+      "fields": [
+        "gpu_name"
+      ],
+      "action": "deny_vulkan",
+      "conditions": {
+        "min_vulkan_api": "1.0.61"
+      },
+      "reason": "Unity default blocklist: Mali Vulkan drivers below this API version are unstable",
+      "source": "unity"
+    },
+    {
+      "id": "pixel6-hard-deny",
+      "vendor": "Google",
+      "match_type": "literal",
+      "pattern": "Pixel 6",
+      "fields": [
+        "device_model"
+      ],
+      "action": "deny_vulkan",
+      "reason": "Unity default blocklist: Pixel 6 hard-denied for Vulkan (Mali-G78 driver issues)",
+      "source": "unity"
+    },
+    {
+      "id": "powervr-rogue-ge8100",
+      "vendor": "Imagination Technologies",
+      "match_type": "regex",
+      "pattern": "PowerVR.*GE8100",
+      "fields": [
+        "gpu_name"
+      ],
+      "action": "deny_vulkan",
+      "reason": "Lowest-end Rogue core; Vulkan driver severely unstable",
+      "source": "community"
+    },
+    {
+      "id": "powervr-rogue-ge8300",
+      "vendor": "Imagination Technologies",
+      "match_type": "regex",
+      "pattern": "PowerVR.*GE8300",
+      "fields": [
+        "gpu_name"
+      ],
+      "action": "deny_vulkan",
+      "reason": "Same Rogue driver family as GE8320; known Vulkan instability",
+      "source": "community"
+    },
+    {
+      "id": "powervr-rogue-ge8320",
+      "vendor": "Imagination Technologies",
+      "match_type": "regex",
+      "pattern": "PowerVR.*GE8320",
+      "fields": [
+        "gpu_name"
+      ],
+      "action": "deny_vulkan",
+      "reason": "SIGSEGV on non-trivial Vulkan workloads; driver leaks memory on optimized-out draw calls",
+      "source": "community"
+    },
+    {
+      "id": "powervr-vulkan-min-spec",
+      "vendor": "Imagination Technologies",
+      "match_type": "regex",
+      "pattern": "PowerVR",
+      "fields": [
+        "gpu_name"
+      ],
+      "action": "deny_vulkan",
+      "conditions": {
+        "min_vulkan_api": "1.1.170",
+        "min_driver_version": "1.473.1397"
+      },
+      "reason": "Unity default blocklist: PowerVR Vulkan drivers below this threshold crash",
+      "source": "unity"
+    },
+    {
+      "id": "nvidia-vulkan-min-spec",
+      "vendor": "NVidia",
+      "match_type": "regex",
+      "pattern": "NVIDIA",
+      "fields": [
+        "gpu_name"
+      ],
+      "action": "deny_vulkan",
+      "conditions": {
+        "min_vulkan_api": "1.0.13"
+      },
+      "reason": "Unity default blocklist: NVidia Vulkan drivers below this API version are unstable",
+      "source": "unity"
+    },
+    {
+      "id": "adreno-vulkan-min-spec",
+      "vendor": "Qualcomm",
+      "match_type": "regex",
+      "pattern": "Adreno",
+      "fields": [
+        "gpu_name"
+      ],
+      "action": "deny_vulkan",
+      "conditions": {
+        "min_vulkan_api": "1.0.49"
+      },
+      "reason": "Unity default blocklist: Adreno Vulkan drivers below this API version are unstable",
+      "source": "unity"
+    }
+  ]
+}
