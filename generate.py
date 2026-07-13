@@ -28,6 +28,7 @@ OUTPUT_FILE = ROOT / "output" / "blocklist.json"
 
 VALID_ACTIONS = {"deny_vulkan"}
 VALID_MATCH_TYPES = {"regex", "literal"}
+VALID_PLATFORMS = {"windows", "linux", "android"}
 DEFAULT_FIELDS = ["gpu_name"]
 
 
