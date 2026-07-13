@@ -16,33 +16,52 @@ Or grab a pinned version from the [releases page](https://github.com/bitgate/gpu
 
 ## Use it
 
-The JSON is a flat array of entries. Each entry has a `pattern` (regex or literal), the `fields` to match against, optional `conditions` (version gates), and an `action`. Load it at startup, check your GPU string:
+The JSON is a flat array of entries. Each entry has a `pattern` (regex or literal), the `fields` to match against, optional `conditions` (version gates), and an `action`. Load it at startup, check your GPU string — C++ with [nlohmann/json](https://github.com/nlohmann/json) (ports 1:1 to C#, Kotlin, Java):
 
-```python
-import json, re
+```cpp
+#include <fstream>
+#include <regex>
+#include <sstream>
+#include <vector>
+#include <nlohmann/json.hpp>
 
-with open("blocklist.json") as f:
-    blocklist = json.load(f)["entries"]
+static std::vector<int> parseVersion(const std::string& v) {
+    std::vector<int> parts;
+    std::stringstream ss(v);
+    for (std::string p; std::getline(ss, p, '.');) parts.push_back(std::stoi(p));
+    return parts;
+}
 
-def should_deny_vulkan(gpu_name, vulkan_api=None, driver_version=None):
-    for entry in blocklist:
-        field_values = {"gpu_name": gpu_name}
-        targets = [field_values.get(f, "") for f in entry.get("fields", ["gpu_name"])]
-        matched = any(
-            re.search(entry["pattern"], t) if entry["match_type"] == "regex" else entry["pattern"] == t
-            for t in targets
-        )
-        if not matched:
-            continue
-        conditions = entry.get("conditions")
-        if conditions:
-            if "min_vulkan_api" in conditions and vulkan_api and vulkan_api < conditions["min_vulkan_api"]:
-                return True, entry
-            if "min_driver_version" in conditions and driver_version and driver_version < conditions["min_driver_version"]:
-                return True, entry
-        else:
-            return True, entry
-    return False, None
+static bool versionBelow(const std::string& actual, const std::string& minimum) {
+    return parseVersion(actual) < parseVersion(minimum);
+}
+
+bool shouldDenyVulkan(const nlohmann::json& blocklist,
+                      const std::string& gpuName,
+                      const std::string& vulkanApi = "",
+                      const std::string& driverVersion = "") {
+    for (const auto& e : blocklist["entries"]) {
+        bool matched = e["match_type"] == "regex"
+            ? std::regex_search(gpuName, std::regex(e["pattern"].get<std::string>()))
+            : gpuName == e["pattern"].get<std::string>();
+        if (!matched) continue;
+
+        if (!e.contains("conditions")) return true;
+        const auto& c = e["conditions"];
+        if (c.contains("min_vulkan_api") && !vulkanApi.empty() &&
+            versionBelow(vulkanApi, c["min_vulkan_api"].get<std::string>())) return true;
+        if (c.contains("min_driver_version") && !driverVersion.empty() &&
+            versionBelow(driverVersion, c["min_driver_version"].get<std::string>())) return true;
+    }
+    return false;
+}
+```
+
+```cpp
+std::ifstream f("blocklist.json");
+auto blocklist = nlohmann::json::parse(f);
+if (shouldDenyVulkan(blocklist, gpuName, vulkanApiVersion, driverVersion))
+    fallBackToGLES();
 ```
 
 No conditions = unconditional hard deny. Conditions present = deny only when the device's reported version is **below** the minimum.
