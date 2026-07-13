@@ -152,9 +152,11 @@ No conditions = unconditional hard deny. Conditions present = deny only when the
 - **PowerVR Rogue GE8100/8300/8320** — unconditional hard denies (community-sourced crash reports)
 - **PowerVR** — Vulkan API < 1.1.170 or driver < 1.473.1397 (Unity default)
 - **Mali** — Vulkan API < 1.0.61 (Unity default)
-- **Adreno** — Vulkan API < 1.0.49 (Unity default)
+- **Adreno** — Vulkan API < 1.0.49, skipped when the raw driver version has its MSB set (Unity default)
 - **NVidia** — Vulkan API < 1.0.13 (Unity default)
-- **Pixel 6** — literal hard deny on `device_model` (Unity default)
+- **Pixel 6 / 6 Pro / 6a** — regex hard deny on `device_model`/`device_product` (`oriole`/`raven`/`bluejay`), Unity denies the whole family by default
+
+All Unity-sourced values verified against the [official minimum-specification table](https://docs.unity3d.com/6000.0/Documentation/Manual/allow-deny-vulkan-usage.html).
 
 ## Contribute
 
