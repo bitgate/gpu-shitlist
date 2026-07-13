@@ -1,8 +1,24 @@
 {
   "version": "2026-07-13",
-  "generated_at": "2026-07-13T10:13:01.870445+00:00",
-  "entry_count": 13,
+  "generated_at": "2026-07-13T10:39:40.994915+00:00",
+  "entry_count": 18,
   "entries": [
+    {
+      "id": "unreal-amd-linux-radv-min",
+      "vendor": "AMD",
+      "match_type": "regex",
+      "pattern": "AMD|Radeon",
+      "fields": [
+        "gpu_name"
+      ],
+      "action": "deny_vulkan",
+      "platform": "linux",
+      "conditions": {
+        "min_driver_version": "25.0.0"
+      },
+      "reason": "Unreal BaseHardware.ini: Mesa/RADV below 25.0.0 has known stability issues and missing features (SM6 + ray tracing require 25.0.0+)",
+      "source": "unreal"
+    },
     {
       "id": "mali-vulkan-min-spec",
       "vendor": "ARM",
@@ -123,6 +139,38 @@
       "source": "unity"
     },
     {
+      "id": "unreal-intel-linux-mesa-min",
+      "vendor": "Intel",
+      "match_type": "regex",
+      "pattern": "Intel",
+      "fields": [
+        "gpu_name"
+      ],
+      "action": "deny_vulkan",
+      "platform": "linux",
+      "conditions": {
+        "min_driver_version": "25.0.0"
+      },
+      "reason": "Unreal BaseHardware.ini: Mesa builds older than 25.0.0 have issues running UE5",
+      "source": "unreal"
+    },
+    {
+      "id": "unreal-intel-windows-vulkan-min",
+      "vendor": "Intel",
+      "match_type": "regex",
+      "pattern": "Intel",
+      "fields": [
+        "gpu_name"
+      ],
+      "action": "deny_vulkan",
+      "platform": "windows",
+      "conditions": {
+        "min_driver_version": "101.5989"
+      },
+      "reason": "Unreal BaseHardware.ini: Intel Windows drivers below unified version 101.5989 (Sept 2024) have known stability and performance issues on Vulkan; compare the last two fields of the full 32.0.101.xxxx version",
+      "source": "unreal"
+    },
+    {
       "id": "nvidia-vulkan-min-spec",
       "vendor": "NVidia",
       "match_type": "regex",
@@ -136,6 +184,38 @@
       },
       "reason": "Unity default blocklist: NVidia Vulkan drivers below this API version are unstable",
       "source": "unity"
+    },
+    {
+      "id": "unreal-nvidia-linux-min",
+      "vendor": "NVidia",
+      "match_type": "regex",
+      "pattern": "NVIDIA",
+      "fields": [
+        "gpu_name"
+      ],
+      "action": "deny_vulkan",
+      "platform": "linux",
+      "conditions": {
+        "min_driver_version": "580.00"
+      },
+      "reason": "Unreal BaseHardware.ini: NVIDIA Linux drivers below 580.00 have known stability issues and missing features",
+      "source": "unreal"
+    },
+    {
+      "id": "unreal-nvidia-windows-vulkan-min",
+      "vendor": "NVidia",
+      "match_type": "regex",
+      "pattern": "NVIDIA",
+      "fields": [
+        "gpu_name"
+      ],
+      "action": "deny_vulkan",
+      "platform": "windows",
+      "conditions": {
+        "min_driver_version": "570.00"
+      },
+      "reason": "Unreal BaseHardware.ini: NVIDIA Windows drivers below the 570 series have known stability issues and missing features on Vulkan",
+      "source": "unreal"
     },
     {
       "id": "adreno-vulkan-min-spec",
