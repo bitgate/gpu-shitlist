@@ -151,7 +151,7 @@ Desktop entries carry a `platform` field (`windows` / `linux`) — skip entries 
 
 ## What's in the list
 
-13 entries covering:
+18 entries covering:
 
 **From Unity's default Vulkan blocklist** ([official min-spec table](https://docs.unity3d.com/6000.0/Documentation/Manual/allow-deny-vulkan-usage.html)):
 
