@@ -12,6 +12,7 @@
 #   conditions: (optional — omit for unconditional hard deny)
 #     min_vulkan_api: deny if device Vulkan API version is below this
 #     min_driver_version: deny if device Vulkan driver version is below this
+#     unless_driver_msb_set: skip this entry when the raw driver version has its MSB set (Qualcomm new-style versioning)
 #   reason: human-readable explanation
 #   source: where this entry came from (unity, unreal, community, etc.)
 
